@@ -1,7 +1,7 @@
 import express from 'express';
 import { 
     getUsers,
-    getUserByid,
+    getUserById,
     createUser,
     updateUser,
     deleteUser
@@ -13,7 +13,7 @@ const router = express.Router();
 
 // Rotte per la gestione degli utenti (protette da autenticazione a autorizazzione admin)
 router.get('/', verifyToken, isAdmin, getUsers);
-router.get('/:id', verifyToken, isAdmin, getUserByid);
+router.get('/:id', verifyToken, isAdmin, getUserById);
 router.post('/', verifyToken, isAdmin, createUser);
 router.put('/:id', verifyToken, isAdmin, updateUser);
 router.delete('/:id', verifyToken, isAdmin, deleteUser);

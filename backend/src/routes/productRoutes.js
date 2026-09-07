@@ -11,12 +11,12 @@ import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 //Rotte Pubbliche
-router.get('/products', getProducts);
+router.get('/', getProducts);
 router.get('/categories', getCategories);
 //Rotte Protette (Richiedono JWT)
-router.post('/products', verifyToken, insertProduct);
-router.get('/products/:id', verifyToken, getProductById);
-router.put('/products/:id', verifyToken, updateProductById);
-router.delete('/products/:id', verifyToken, deleteProduct);
+router.post('/', verifyToken, insertProduct);
+router.get('/:id', verifyToken, getProductById);
+router.put('/:id', verifyToken, updateProductById);
+router.delete('/:id', verifyToken, deleteProduct);
 
 export default router;

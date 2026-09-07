@@ -4,10 +4,16 @@ import db from '../config/db.js';
 
 // Registrazione nuovo utente
 export const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const username = req.body.username?.trim();
+    const email = req.body.email?.trim().toLowerCase();
+    const { password } = req.body;
 
     if (!username || !email || !password) {
-        return res.status(404).json({message: 'All fields are required'});
+        return res.status(400).json({message: 'Username, email and password are required.'});
+    }
+
+    if (password.length < 8) {
+        return res.status(400).json({message: 'Password must contain at least 8 characters.'});
     }
 
     try{
@@ -39,12 +45,17 @@ export const registerUser = async (req, res) => {
 
 // Login utente 
 export const login = async (req, res) => {
-    const {email, password} = req.body;
+    const email = req.body.email?.trim().toLowerCase();
+    const {password} = req.body;
 
     if(!email || !password) {
         return res.status(400).json({message: 'Email and password are required'});
     }
     try{
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET is not configured.');
+        }
+
         //Cerca l'utente per mail
         const [users] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
         if(users.length === 0) {
@@ -62,7 +73,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {id: user.id, username: user.username, role: user.role},
             process.env.JWT_SECRET,
-            {expiresIn: '24h'}
+            {expiresIn: '1h'}
         );
         res.json({
             message: 'Successful login!',

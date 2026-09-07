@@ -44,10 +44,10 @@ export const getProductById = async (req, res) => {
       WHERE p.id = ?`,
       [id],
     );
-    if (!product) {
+    if (product.length === 0) {
       return res.status(404).json({ message: "Product not found." });
     }
-    res.json(product);
+    res.json(product[0]);
   } catch (error) {
     console.error("Error in product recovery:", error);
     res.status(500).json({ message: "Internal server error." });
@@ -58,7 +58,7 @@ export const insertProduct = async (req, res) => {
   const { title, description, price, stock_quantity, category_id } = req.body;
   const created_by = req.user.id; // Estratto dal middleware verifyToken
 
-  if (!title || !price || !category_id) {
+  if (!title?.trim() || price === undefined || price === null || !category_id) {
     return res
       .status(400)
       .json({ message: "Title, price and category are required." });
@@ -69,7 +69,7 @@ export const insertProduct = async (req, res) => {
       `INSERT INTO products (title, description, price, stock_quantity, category_id, created_by)
             VALUES (?, ?, ?, ?, ?, ?)`,
       [
-        title,
+        title.trim(),
         description || "",
         price,
         stock_quantity || 0,
@@ -89,11 +89,15 @@ export const insertProduct = async (req, res) => {
 
 export const updateProductById = async (req, res) => {
   const { id } = req.params;
-  const fields = req.body;
-  if(Object.keys(fields).length === 0) {
+  const allowedFields = ['title', 'description', 'price', 'stock_quantity', 'category_id'];
+  const fields = Object.fromEntries(
+    Object.entries(req.body).filter(([key]) => allowedFields.includes(key)),
+  );
+
+  if (Object.keys(fields).length === 0) {
     return res.status(400).json({ message: 'No fields provided for update.'});
   }
-  const setClause = Object.keys(fields).map((key)=> `${key}=?`).join(', ');
+  const setClause = Object.keys(fields).map((key) => `${key} = ?`).join(', ');
   const values = Object.values(fields);
   try{
     const [result] = await db.execute(
