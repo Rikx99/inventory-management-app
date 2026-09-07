@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { testConnection } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userAuthRoutes.js';
 import productRoutes from './routes/productRoutes.js'
 
 // carica le variabili d'ambiente dal file .env
@@ -16,7 +17,8 @@ app.use(express.json());
 
 // Registrazione Rotte API
 app.use('/api/auth', authRoutes);
-app.use('/api', productRoutes)
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 // Rotta base di test
 app.get('/', (req, res) => {
