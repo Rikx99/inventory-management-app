@@ -14,8 +14,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- Nota: L'hash corrisponde alla password 'password123'
 -- --------------------------------------------------------
 INSERT INTO users (username, email, password_hash, role) VALUES
-('admin', 'admin@inventario.it', '$2a$10$w85VpWjE9Y3K1M4d1x7X7.dE7.lG2iQf7O7k6I8q9J0u1V2W3X4Y5', 'admin'),
-('operatore', 'mario.rossi@inventario.it', '$2a$10$w85VpWjE9Y3K1M4d1x7X7.dE7.lG2iQf7O7k6I8q9J0u1V2W3X4Y5', 'user');
+('admin', 'admin@inventario.it', '$2b$10$3QAPmlBzkUrCTv0FjlQrW.LojSG93GXi1K.lt8kjKuglUCE8QOp5u', 'admin'),
+('operatore', 'mario.rossi@inventario.it', '$2b$10$3QAPmlBzkUrCTv0FjlQrW.LojSG93GXi1K.lt8kjKuglUCE8QOp5u', 'user');
 
 -- --------------------------------------------------------
 -- 2. POPOLAMENTO TABELLA CATEGORIES
