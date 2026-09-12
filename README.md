@@ -1,72 +1,61 @@
-# Gestionale Inventario (Full Stack React + Node.js)
-
-Applicazione gestionale per la gestione di prodotti, categorie e ordini.  
-Progetto full‑stack sviluppato con **React**, **Node.js**, **Express** e **MySQL**.
-
----
-
-## 🚀 Stato del progetto
-
-### ✔️ Fase 1 — Completata
-
-### ⏳ Fase 2 — In sviluppo
-
-### ⏳ Fase 3 — In sviluppo
-
 # Gestionale Inventario
 
-Backend REST per la gestione di prodotti, categorie e utenti, sviluppato con Node.js, Express e MySQL. Il frontend React è previsto nella fase successiva.
+Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato con Node.js, Express e MySQL. Il progetto è stato aggiornato con validazioni, gestione ruoli e test API completi.
 
 ## Stato del progetto
 
-### Completato
+### ✅ Backend completato
 
-- Struttura backend con Node.js ed Express
-- Connessione a MySQL tramite `mysql2/promise`
-- Configurazione tramite variabili d'ambiente con `dotenv`
-- API di registrazione e login utenti
-- Password cifrate con `bcryptjs`
-- Autenticazione tramite JWT
-- Middleware di verifica del token
-- Autorizzazione per ruolo amministratore
-- CRUD utenti riservato agli amministratori
+- registrazione e login utenti
+- autenticazione JWT
+- controllo token e sessione utente
+- autorizzazione admin
 - CRUD prodotti
-- Recupero categorie
-- Ricerca prodotti per titolo
-- Filtro prodotti per categoria
-- Script SQL per schema e dati di test
-- Verifica della connessione al database all'avvio
+- CRUD utenti riservato agli admin
+- ricerca e filtro prodotti
+- paginazione dei prodotti
+- validazione input con Zod
+- script SQL per schema e dati demo
+- verifica connessione database all'avvio
 
-### Verificato
+### ✅ Verifiche eseguite
 
-- Avvio del server sulla porta `5000`
-- Connessione al database funzionante
-- Endpoint base funzionante
-- Recupero prodotti e categorie verificato
-- Sintassi JavaScript e import delle route verificati
-- Hash bcrypt degli utenti demo corretto nel seed
+- avvio del server sulla porta `5000`
+- connessione al database MySQL
+- autenticazione e recupero dati utente loggato
+- registrazione e login con password hashata
+- accesso ai prodotti e categorie
+- CRUD prodotti
+- CRUD utenti con ruoli admin/user
+- protezione di rotte admin
+- completamento test delle API principali
 
-### Prossimo passo
+### 🔜 Prossimo step
 
-- Test completo delle rotte con Postman
-- Creazione del frontend React
-- Integrazione frontend-backend
-- Pagine di login, prodotti e gestione utenti
+- creazione del frontend React
+- integrazione frontend-backend
+- gestione UI per login, prodotti e utenti
+- eventuale dashboard amministrativa
 
-## Tecnologie
+---
+
+## Tecnologie utilizzate
 
 ### Backend
 
 - Node.js
 - Express
 - MySQL
-- `mysql2`
-- `bcryptjs`
-- `jsonwebtoken`
-- `dotenv`
-- `cors`
+- mysql2
+- bcryptjs
+- jsonwebtoken
+- dotenv
+- cors
+- zod
 
-## Struttura principale
+---
+
+## Struttura del progetto
 
 ```text
 gestionale-inventario/
@@ -75,18 +64,44 @@ gestionale-inventario/
 │   │   ├── schema.sql
 │   │   └── seed.sql
 │   ├── src/
-│   │   ├── config/db.js
+│   │   ├── config/
+│   │   │   └── db.js
 │   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── productController.js
+│   │   │   └── userController.js
 │   │   ├── middlewares/
+│   │   │   ├── adminMiddleware.js
+│   │   │   ├── authMiddleware.js
+│   │   │   └── validate.js
 │   │   ├── routes/
+│   │   │   ├── authRoutes.js
+│   │   │   ├── productRoutes.js
+│   │   │   └── userAuthRoutes.js
+│   │   ├── services/
+│   │   │   └── authService.js
 │   │   └── index.js
+│   ├── .env
 │   └── package.json
-└── frontend/   # da creare
+└── README.md
 ```
 
-## Configurazione
+> Il file `.env` non va committato nel repository.
 
-Creare il file `backend/.env`:
+---
+
+## Setup ambiente
+
+### 1) Installazione dipendenze
+
+```bash
+cd backend
+npm install
+```
+
+### 2) Configurazione variabili d'ambiente
+
+Crea un file `.env` dentro `backend/`:
 
 ```env
 DB_HOST=localhost
@@ -95,156 +110,170 @@ DB_PASSWORD=la_tua_password
 DB_NAME=inventario_db
 DB_PORT=3306
 PORT=5000
-JWT_SECRET=una_chiave_lunga_e_casuale
+JWT_SECRET=una_chiave_segretissima_e_casuale
 ```
 
-Non committare il file `.env` nel repository.
-
-## Installazione e avvio
-
-Dal terminale:
+### 3) Avvio del server
 
 ```bash
 cd backend
-npm install
 npm start
 ```
 
-Per lo sviluppo con riavvio automatico:
+Per sviluppo con riavvio automatico:
 
 ```bash
+cd backend
 npm run dev
 ```
 
-Il server sarà disponibile su `http://localhost:5000`.
+Il backend sarà disponibile all'indirizzo:
+
+```text
+http://localhost:5000
+```
+
+---
 
 ## Database e dati demo
 
-Creare il database e applicare gli script SQL nell'ordine seguente:
+Crea il database e applica gli script SQL nell'ordine corretto:
 
 ```bash
 mysql -u root -p inventario_db < db/schema.sql
 mysql -u root -p inventario_db < db/seed.sql
 ```
 
-Gli utenti demo utilizzano la password:
+### Credenziali demo
 
-```text
+Password di tutti gli utenti demo:
+
 password123
+
+Account presenti nel seed:
+
+- `admin@inventario.it` → ruolo `admin`
+- `mario.rossi@inventario.it` → ruolo `user`
+
+---
+
+## API REST
+
+Base URL: http://localhost:5000
+
+### Header autenticazione
+
+Tutte le route protette richiedono:
+
+```http
+Authorization: Bearer <token>
 ```
-
-Account disponibili:
-
-- `admin@inventario.it` con ruolo `admin`
-- `mario.rossi@inventario.it` con ruolo `user`
-
-## API principali
-
-Base URL: `http://localhost:5000`
 
 ### Autenticazione
 
 | Metodo | Endpoint | Accesso | Descrizione |
 | --- | --- | --- | --- |
-| `POST` | `/api/auth/registerUser` | Pubblico | Registra un utente |
-| `POST` | `/api/auth/login` | Pubblico | Esegue il login e restituisce un JWT |
-| `GET` | `/api/auth/me` | JWT | Verifica il token corrente |
+| `POST` | `/api/auth/registerUser` | Pubblico | Registra un nuovo utente |
+| `POST` | `/api/auth/login` | Pubblico | Effettua il login e restituisce il JWT |
+| `GET` | `/api/auth/me` | JWT | Verifica il token e restituisce i dati utente |
 
-### Prodotti e categorie
+### Prodotti
+
+Le rotte di prodotto richiedono un token valido; la scrittura e la modifica sono riservate agli admin.
 
 | Metodo | Endpoint | Accesso | Descrizione |
 | --- | --- | --- | --- |
-| `GET` | `/api/products` | Pubblico | Elenca i prodotti |
-| `GET` | `/api/products?search=monitor` | Pubblico | Cerca per titolo |
-| `GET` | `/api/products?category=Elettronica` | Pubblico | Filtra per categoria |
-| `GET` | `/api/products/categories` | Pubblico | Elenca le categorie |
-| `GET` | `/api/products/:id` | JWT | Recupera un prodotto |
-| `POST` | `/api/products` | JWT | Crea un prodotto |
-| `PUT` | `/api/products/:id` | JWT | Modifica un prodotto |
-| `DELETE` | `/api/products/:id` | JWT | Elimina un prodotto |
+| `GET` | `/api/products` | JWT | Elenca tutti i prodotti |
+| `GET` | `/api/products?search=monitor` | JWT | Cerca prodotti per titolo |
+| `GET` | `/api/products?category=Elettronica` | JWT | Filtra prodotti per categoria |
+| `GET` | `/api/products/categories` | JWT | Elenca le categorie disponibili |
+| `GET` | `/api/products/paginated?page=1&limit=10` | JWT | Lista paginata dei prodotti |
+| `GET` | `/api/products/:id` | JWT | Recupera un prodotto per ID |
+| `POST` | `/api/products` | Admin | Crea un nuovo prodotto |
+| `PATCH` | `/api/products/:id` | Admin | Aggiorna un prodotto |
+| `DELETE` | `/api/products/:id` | Admin | Elimina un prodotto |
 
 ### Utenti
 
-Le rotte utenti richiedono un token JWT associato a un account con ruolo `admin`.
+Le rotte utente richiedono autorizzazione admin.
 
-| Metodo | Endpoint | Descrizione |
-| --- | --- | --- |
-| `GET` | `/api/users` | Elenca gli utenti |
-| `GET` | `/api/users/:id` | Recupera un utente |
-| `POST` | `/api/users` | Crea un utente |
-| `PUT` | `/api/users/:id` | Modifica un utente |
-| `DELETE` | `/api/users/:id` | Elimina un utente |
+| Metodo | Endpoint | Accesso | Descrizione |
+| --- | --- | --- | --- |
+| `GET` | `/api/users` | Admin | Elenca tutti gli utenti |
+| `GET` | `/api/users/:id` | Admin | Recupera un utente per ID |
+| `POST` | `/api/users` | Admin | Crea un utente |
+| `PATCH` | `/api/users/:id` | Admin | Aggiorna un utente |
+| `DELETE` | `/api/users/:id` | Admin | Elimina un utente |
 
-Per le rotte protette inviare l'header:
+---
 
-```text
-Authorization: Bearer IL_TUO_TOKEN
-```
+## Esempi di payload
 
-## Esempio di creazione prodotto
+### Registro utente
 
 ```json
 {
-	"title": "Nuovo prodotto",
-	"description": "Descrizione del prodotto",
-	"price": 25.90,
-	"stock_quantity": 10,
-	"category_id": 1
+  "username": "nuovo_utente",
+  "email": "nuovo@inventario.it",
+  "password": "password123"
 }
 ```
 
-## Note di sicurezza
+### Login
 
-- Le password non vengono salvate in chiaro: sono cifrate con `bcryptjs`.
-- Le query al database utilizzano parametri preparati.
-- Il token JWT deve essere firmato con un valore segreto presente nelle variabili d'ambiente.
-- In produzione utilizzare HTTPS, un `JWT_SECRET` casuale e un sistema di rate limiting per il login.
-- Il token demo ha una durata limitata e non deve essere utilizzato in produzione.
+```json
+{
+  "email": "admin@inventario.it",
+  "password": "password123"
+}
+```
 
-## 📁 Struttura del progetto (attuale)
+### Creazione prodotto
 
-gestionale-inventario/
-│
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── db.js
-│   │   ├── index.js
-│   ├── package.json
-│   └── .env (non incluso)
-│
-└── frontend/ (non ancora creato)
+```json
+{
+  "title": "Nuovo prodotto",
+  "description": "Descrizione del prodotto",
+  "price": 25.9,
+  "stock_quantity": 10,
+  "category_id": 1
+}
+```
 
+### Aggiornamento prodotto con PATCH
+
+```json
+{
+  "price": 29.99,
+  "stock_quantity": 15
+}
+```
+
+### Aggiornamento utente con PATCH
+
+```json
+{
+  "role": "admin",
+  "email": "nuovo@email.it"
+}
+```
 
 ---
 
-## 🔧 Tecnologie utilizzate (attuali)
+## Validazione e sicurezza
 
-### Backend
-- Node.js
-- Express
-- MySQL2
-- dotenv
-- cors
-
-*(JWT, bcrypt, Auth, CRUD → saranno aggiunti nella Fase 2)*
+- le password vengono salvate in modo sicuro con `bcryptjs`
+- il token JWT viene generato con `jsonwebtoken`
+- il middleware `verifyToken` controlla la presenza e la validità del token
+- il middleware `isAdmin` limita le operazioni sensibili agli admin
+- i dati in input vengono validati con `zod`
+- gli endpoint prendono parametri SQL in modo sicuro tramite prepared statements
 
 ---
 
-## ⚙️ Setup ambiente
+## Note finali
 
-### Installazione dipendenze
-```bash
-npm install
+Questo repository attualmente contiene il backend completo del gestionale. Il frontend React non è ancora stato implementato, ma la base API è pronta per essere collegata a una UI client-side.
 
-Avvio del server
-npm start
-
-Variabili d'ambiente (.env)
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=la_tua_password
-DB_NAME=inventario_db
-DB_PORT=3306
-PORT=5000
+Il progetto è strutturato per essere esteso con pagine di login, dashboard gestione prodotti, gestione utenti e report di inventario.
 
