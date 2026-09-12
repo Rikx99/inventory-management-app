@@ -217,9 +217,14 @@ export const getProductsPaginated = async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
+    // Iniettare limit e offset direttamente come numeri sicuri evita l'errore dei prepared statement di MySQL
     const [products] = await db.execute(
-      'SELECT * FROM products ORDER BY created_at DESC LIMIT ? OFFSET ?',
-      [limit, offset],
+      `SELECT p.*, c.name AS category_name, u.username AS created_by_username
+       FROM products p
+       JOIN categories c ON p.category_id = c.id
+       JOIN users u ON p.created_by = u.id
+       ORDER BY p.created_at DESC 
+       LIMIT ${limit} OFFSET ${offset}`
     );
 
     const [countResult] = await db.execute('SELECT COUNT(*) AS total FROM products');
