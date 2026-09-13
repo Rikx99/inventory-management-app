@@ -1,11 +1,45 @@
-# Node
+# Node & Gestori di Pacchetti
 node_modules/
-.env
+.pnpm-store/
+.yarn/
 
-# Logs
+# Variabili d'ambiente e dati sensibili (FONDAMENTALI)
+.env
+.env.*
+!.env.example
+
+# File di Build & Cache (Backend & Vite/React)
+dist/
+dist-ssr/
+build/
+.cache/
+.vite/
+
+# Configurazione IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.ntvsopt
+*.njsproj
+*.sln
+*.swp
+
+# File di Log
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# System files
+# Database locali e backup pesanti
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+
+# System files (macOS e Windows)
 .DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
