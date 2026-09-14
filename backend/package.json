@@ -2,7 +2,7 @@
   "name": "gestionale-inventario-backend",
   "version": "1.0.0",
   "description": "Backend Node.js per gestionale inventario con autenticazione JWT, MySQL e API REST.",
-  "main": "server.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon ./src/index.js",
