@@ -1,6 +1,6 @@
 # Gestionale Inventario
 
-Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato con Node.js, Express e MySQL. Il progetto è stato aggiornato con validazioni, gestione ruoli e test API completi.
+Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato con Node.js, Express e MySQL.
 
 ## Stato del progetto
 
@@ -86,7 +86,7 @@ gestionale-inventario/
 └── README.md
 ```
 
-> Il file `.env` non va committato nel repository.
+> Il file `.env` non va committato nella repository.
 
 ---
 
@@ -107,7 +107,7 @@ Crea un file `.env` dentro `backend/`:
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=la_tua_password
-DB_NAME=inventario_db
+DB_NAME=nome_db
 DB_PORT=3306
 PORT=5000
 JWT_SECRET=una_chiave_segretissima_e_casuale
@@ -273,7 +273,7 @@ Le rotte utente richiedono autorizzazione admin.
 
 ## Note finali
 
-Questo repository attualmente contiene il backend completo del gestionale. Il frontend React non è ancora stato implementato, ma la base API è pronta per essere collegata a una UI client-side.
+Questa repository attualmente contiene il backend completo del gestionale. Il frontend React non è ancora stato implementato, ma la base API è pronta per essere collegata a una UI client-side.
 
 Il progetto è strutturato per essere esteso con pagine di login, dashboard gestione prodotti, gestione utenti e report di inventario.
 
