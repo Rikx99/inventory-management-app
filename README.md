@@ -63,6 +63,8 @@ gestionale-inventario/
 │   ├── db/
 │   │   ├── schema.sql
 │   │   └── seed.sql
+│   │── postman/
+│   │   └── progetto-gestionale-inventario.postman_collection.json
 │   ├── src/
 │   │   ├── config/
 │   │   │   └── db.js
@@ -154,6 +156,21 @@ Account presenti nel seed:
 
 - `admin@inventario.it` → ruolo `admin`
 - `mario.rossi@inventario.it` → ruolo `user`
+
+---
+## 🧪 Testing con Postman
+
+Nella repository è inclusa una collection Postman pronta all'uso per testare tutte le rotte API.
+
+### Come importare ed usare la collection:
+1. Apri **Postman** e clicca su **Import**.
+2. Seleziona il file `backend/postman/gestionale-inventory.postman_collection.json`.
+3. Assicurati che il server backend sia avviato su `http://localhost:5000`.
+4. **Autenticazione:**
+   - Esegui la chiamata `POST /api/auth/login` con le credenziali demo admin.
+   - Copia il token JWT presente nel body della risposta.
+   - Clicca sulla radice della Collection in Postman, apri la scheda **Variables** e incolla il token nel campo `authToken`.
+5. **Path Variables:** Per le chiamate che richiedono un ID (es. `GET /api/products/:id`), inserisci l'ID desiderato nella scheda **Params** -> **Path Variables**.
 
 ---
 
