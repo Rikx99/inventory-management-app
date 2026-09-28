@@ -3,22 +3,38 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import apiClient from '../lib/httpClient.js';
-import { useAuthStore } from '../store/useAuthStore.js';
+import apiClient from '@/lib/httpClient.js';
+import { useAuthStore } from '@/store/useAuthStore.js';
 
 const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 const loginSchema = z.object({
   email: z
-    .string({ required_error: 'L\'email è obbligatoria' })
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? "L'email è obbligatoria"
+          : 'Indirizzo email non valido',
+    })
     .trim()
     .toLowerCase()
-    .regex(emailRegex, { message: 'Inserisci un indirizzo email valido' }),
-  
+    .regex(emailRegex, {
+      error: (issue) =>
+        issue.input === ''
+          ? "L'email è obbligatoria"
+          : 'Inserisci un indirizzo email valido',
+    }),
+
   password: z
-    .string({ required_error: 'La password è obbligatoria' })
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? 'Password obbligatoria'
+          : 'Inserisci una password valida',
+    })
     .trim()
-    .min(6, 'La password deve avere almeno 6 caratteri'),
+    .min(1, { error: 'Password obbligatoria' })
+    .min(6, { error: 'La password deve avere almeno 6 caratteri' }),
 });
 
 export default function LoginForm() {
