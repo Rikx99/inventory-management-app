@@ -1,6 +1,6 @@
 # Gestionale Inventario
 
-Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato con Node.js, Express e MySQL.
+Applicazione per la gestione di prodotti, utenti e autorizzazioni, composta da un backend REST Node.js/Express con database MySQL e da un frontend React in fase di sviluppo.
 
 ## Stato del progetto
 
@@ -18,6 +18,15 @@ Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato co
 - script SQL per schema e dati demo
 - verifica connessione database all'avvio
 
+### 🚧 Frontend in sviluppo
+
+- progetto React configurato con Vite
+- form di login e registrazione con React Hook Form e Zod 4
+- pagina di login collegata al form
+- componenti UI di base configurati con shadcn/ui e Radix UI
+- client HTTP Axios predisposto per comunicare con il backend
+- routing e pagine protette in fase di completamento
+
 ### ✅ Verifiche eseguite
 
 - avvio del server sulla porta `5000`
@@ -32,8 +41,9 @@ Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato co
 
 ### 🔜 Prossimo step
 
-- creazione del frontend React
-- integrazione frontend-backend
+- completamento del routing e della pagina di registrazione
+- completamento della dashboard e delle pagine admin
+- verifica dei flussi frontend-backend
 - gestione UI per login, prodotti e utenti
 - eventuale dashboard amministrativa
 
@@ -52,6 +62,16 @@ Backend REST per la gestione di prodotti, utenti e autorizzazioni, sviluppato co
 - dotenv
 - cors
 - zod
+
+### Frontend
+
+- React e Vite
+- React Router
+- Tailwind CSS
+- shadcn/ui e Radix UI
+- React Hook Form e Zod
+- Axios
+- Zustand
 
 ---
 
@@ -84,6 +104,23 @@ gestionale-inventario/
 │   │   │   └── authService.js
 │   │   └── index.js
 │   ├── .env
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   ├── ui/
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── RegisterForm.jsx
+│   │   ├── lib/
+│   │   │   └── httpClient.js
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
+│   │   │   └── Login.jsx
+│   │   ├── routes/
+│   │   ├── store/
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   └── package.json
 └── README.md
 ```
@@ -134,6 +171,20 @@ Il backend sarà disponibile all'indirizzo:
 ```text
 http://localhost:5000
 ```
+
+### 4) Avvio del frontend
+
+In un secondo terminale, dalla cartella `frontend/`, installa le dipendenze e avvia Vite:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Vite mostrerà nel terminale l'indirizzo locale del frontend. Il client HTTP è attualmente configurato per raggiungere il backend su `http://localhost:5000/api`; assicurati quindi che il server e il database siano attivi.
+
+Il frontend è ancora in sviluppo: alcune route in `App.jsx` fanno riferimento a pagine non ancora implementate, quindi l'applicazione non è ancora completa.
 
 ---
 
@@ -290,7 +341,5 @@ Le rotte utente richiedono autorizzazione admin.
 
 ## Note finali
 
-Questa repository attualmente contiene il backend completo del gestionale. Il frontend React non è ancora stato implementato, ma la base API è pronta per essere collegata a una UI client-side.
-
-Il progetto è strutturato per essere esteso con pagine di login, dashboard gestione prodotti, gestione utenti e report di inventario.
+Il backend e le API principali sono completati. Il frontend React è stato avviato e include i form di autenticazione e una prima pagina di login; routing, registrazione e viste per la gestione di prodotti e utenti sono ancora in sviluppo.
 
