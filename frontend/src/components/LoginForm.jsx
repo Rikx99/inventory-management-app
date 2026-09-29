@@ -1,10 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import apiClient from '@/lib/httpClient.js';
 import { useAuthStore } from '@/store/useAuthStore.js';
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -13,7 +16,7 @@ const loginSchema = z.object({
     .string({
       error: (issue) =>
         issue.input === undefined
-          ? "L'email è obbligatoria"
+          ? 'L\'email è obbligatoria'
           : 'Indirizzo email non valido',
     })
     .trim()
@@ -21,7 +24,7 @@ const loginSchema = z.object({
     .regex(emailRegex, {
       error: (issue) =>
         issue.input === ''
-          ? "L'email è obbligatoria"
+          ? 'L\'email è obbligatoria'
           : 'Inserisci un indirizzo email valido',
     }),
 
@@ -69,29 +72,38 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input 
+      <div className='flex flex-col gap-4 my-5'>
+        <Label htmlFor="email">Email</Label>
+        <Input 
           id="email"
           type="email" 
+          placeholder='m@example.com'
           {...register('email')} 
+          className="mx-auto max-w-sm w-full h-10 px-4 rounded-2xl"
         />
         {errors.email && <p style={{ color: 'red' }}>{errors.email.message}</p>}
       </div>
 
-      <div>
-        <label htmlFor="password">Password</label>
-        <input 
-          id="password"
-          type="password" 
-          {...register('password')} 
+      <div className='flex flex-col gap-4 my-5'>
+        <Label htmlFor="password">Password</Label>
+        <Input 
+          id='password'
+          type='password'
+          placeholder='password'
+          {...register('password')}
+          className='mx-auto max-w-sm w-full h-10 px-4 rounded-2xl'
         />
         {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
       </div>
-
-      <button type="submit" disabled={isSubmitting}>
+      
+      <Button className='my-5' variant='mobile' type='submit' disabled={isSubmitting}>
         {isSubmitting ? 'Accesso in corso...' : 'Accedi'}
-      </button>
+      </Button>
+      <div className='text-center text-gray-500 my-1'>
+        <p>
+          Non sei registrato?<Link className='ml-auto inline-block text-sm underline underline-offset-4 px-3 text-blue-500 hover:text-blue-600 hover:drop-shadow-sm transition-all' href='Register' to="/register">Sign up</Link>
+        </p>
+      </div>
     </form>
   );
 }

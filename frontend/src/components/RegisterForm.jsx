@@ -20,7 +20,7 @@ const registerSchema = z
                     : "Inserisci un username Valido",
                  })
             .trim()
-            .min(1, { error: "L'username è obbligatorio"})
+            .min(1, { error: "L'username è obbligatorio!"})
             .min(5, {error: "L'username deve avere almeno 5 caratteri"}),
 
         email: z
@@ -35,7 +35,7 @@ const registerSchema = z
             .regex(emailRegex, { 
                 error: (issue) => 
                     issue.input === ""
-                    ? "L'email è obbligatoria"
+                    ? "L'email è obbligatoria!"
                     : "Inserisci un indirizzo email valido",
              }),
 
@@ -43,7 +43,7 @@ const registerSchema = z
             .string({ 
                 error: (issue) =>
                     issue.input === undefined
-                    ? "Password obbligatoria"
+                    ? "Password obbligatoria!"
                     : "Inserisci una password valida",
              })
             .trim()
@@ -89,27 +89,28 @@ export const RegisterForm = () => {
     } 
     return(
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
+            <div className='flex flex-col gap-3'>
             <Label htmlFor="username">Nome utente</Label>
             <Input id="username" {...register('username')} />
             {errors.username && (
-                <p role="alert">{errors.username.message}</p>
+                <p style={{ color: 'red' }} role="alert">{errors.username.message}</p>
             )}
             </div>
 
-            <div>
+            <div className='flex flex-col gap-3'>
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" {...register('email')} />
-            {errors.email && <p role="alert">{errors.email.message}</p>}
+            {errors.email && <p style={{ color: 'red' }} role="alert">{errors.email.message}</p>}
             </div>
 
-            <div>
+            <div className='flex flex-col gap-3'>
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" {...register('password')} />
-            {errors.password && <p role="alert">{errors.password.message}</p>}
+            {errors.password && <p style={{ color: 'red' }} role="alert">{errors.password.message}</p>}
+           
             </div>
 
-            <div>
+            <div className='flex flex-col gap-3'>
             <Label htmlFor="confirmPassword">Conferma password</Label>
             <Input
                 id="confirmPassword"
@@ -117,17 +118,18 @@ export const RegisterForm = () => {
                 {...register('confirmPassword')}
             />
             {errors.confirmPassword && (
-                <p role="alert">{errors.confirmPassword.message}</p>
+                <p style={{ color: 'red' }} role="alert">{errors.confirmPassword.message}</p>
             )}
             </div>
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button className='my-5' variant='mobile' type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Registrazione in corso...' : 'Registrati'}
             </Button>
-
-            <p>
-            Hai già un account? <Link to="/login">Accedi</Link>
-            </p>
+            <div className='text-center text-gray-500 my-1'>
+                <p>
+                    Hai già un account?<Link className='ml-auto inline-block text-sm underline underline-offset-4 px-3 text-blue-500 hover:text-blue-600 hover:drop-shadow-sm transition-all' href='Register' to="/login">Accedi</Link>
+                </p>
+            </div>
         </form>
     );
 
