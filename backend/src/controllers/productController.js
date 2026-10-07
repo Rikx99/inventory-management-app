@@ -50,17 +50,18 @@ const validateProductUpdatePayload = (body) => {
   return normalized;
 };
 
+const getProductSelect = (isAdmin) => `
+  SELECT p.id, p.title, p.description, p.price, p.stock_quantity, p.category_id,
+    p.created_at, p.updated_at, c.name AS category_name${isAdmin ? ', p.created_by, u.username AS created_by_username' : ''}
+  FROM products p
+  JOIN categories c ON p.category_id = c.id${isAdmin ? '\n  JOIN users u ON p.created_by = u.id' : ''}
+`;
+
 export const getProducts = async (req, res) => {
   const { search, category } = req.query;
 
   try {
-    let query = `
-      SELECT p.*, c.name AS category_name, u.username AS created_by_username
-      FROM products p
-      JOIN categories c ON p.category_id = c.id
-      JOIN users u ON p.created_by = u.id
-      WHERE 1 = 1
-    `;
+    let query = `${getProductSelect(req.user?.role === 'admin')} WHERE 1 = 1`;
     const queryParams = [];
 
     if (search) {
@@ -88,11 +89,7 @@ export const getProductById = async (req, res) => {
 
   try {
     const [product] = await db.execute(
-      `SELECT p.*, c.name AS category_name, u.username AS created_by_username
-      FROM products p
-      JOIN categories c ON p.category_id = c.id
-      JOIN users u ON p.created_by = u.id
-      WHERE p.id = ?`,
+      `${getProductSelect(req.user?.role === 'admin')} WHERE p.id = ?`,
       [id],
     );
 
@@ -219,11 +216,8 @@ export const getProductsPaginated = async (req, res) => {
   try {
     // Iniettare limit e offset direttamente come numeri sicuri evita l'errore dei prepared statement di MySQL
     const [products] = await db.execute(
-      `SELECT p.*, c.name AS category_name, u.username AS created_by_username
-       FROM products p
-       JOIN categories c ON p.category_id = c.id
-       JOIN users u ON p.created_by = u.id
-       ORDER BY p.created_at DESC 
+      `${getProductSelect(req.user?.role === 'admin')}
+       ORDER BY p.created_at DESC
        LIMIT ${limit} OFFSET ${offset}`
     );
 
