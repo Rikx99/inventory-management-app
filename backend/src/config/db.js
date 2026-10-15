@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
-
+import fs from 'fs';
 // carica le variabili d'ambiente dal file .env
 dotenv.config();
 
@@ -12,6 +12,10 @@ const db = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
+    ssl: {
+        ca: 
+        fs.readFileSync('./src/certificates/ca.pem')
+    },
     waitForConnections: true,
     connectionLimit: 10, // Numero massimo di connessioni contemporanee nel pool
     queueLimit: 0
