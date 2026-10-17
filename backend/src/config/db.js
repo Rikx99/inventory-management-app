@@ -5,6 +5,8 @@ import fs from 'fs';
 dotenv.config();
 
 // crea una connessione al database MYSQL
+console.log("DB_HOST:", process.env.DB_HOST);
+console.log("DB_PORT:", process.env.DB_PORT);
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
