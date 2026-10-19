@@ -256,3 +256,82 @@ Database
 Provider: Aiven
 Status: ✅ Running
 Region: Europe
+
+# Deployment URLs
+
+## Frontend
+
+https://inventory-management-app-seven-peach.vercel.app
+
+## Backend
+
+https://inventory-management-api-xxxx.onrender.com
+
+## Database
+
+Aiven MySQL
+
+Status:
+✅ Online
+
+# Problemi risolti durante il deployment
+
+## Vercel API URL
+
+Problema:
+
+Frontend tentava di chiamare:
+
+http://localhost:5000/api
+
+Causa:
+
+Branch corretto ma variabile ambiente non configurata correttamente.
+
+Soluzione:
+
+Configurata:
+
+VITE_API_URL=https://backend.onrender.com/api
+
+## React Router Refresh
+
+Problema:
+
+Refresh su /dashboard generava 404.
+
+Causa:
+
+Vercel cercava un file fisico /dashboard.
+
+Soluzione:
+
+Creazione file vercel.json:
+
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
+## CORS Configuration
+
+Problema:
+
+Il backend inizialmente accettava richieste Cross-Origin senza restrizioni.
+
+Rischio:
+
+Consentire richieste da domini non autorizzati.
+
+Soluzione:
+
+Configurazione del middleware CORS limitando l'accesso al dominio Vercel:
+
+```js
+app.use(cors({
+  origin: 'https://inventory-management-app-seven-peach.vercel.app'
+}));

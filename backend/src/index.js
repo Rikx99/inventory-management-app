@@ -12,7 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'https://inventory-management-app-seven-peach.vercel.app',
+  origin:[
+    'http://localhost:5173', 
+    'https://inventory-management-app-seven-peach.vercel.app',
+  ]
 }));
 app.use(express.json());
 

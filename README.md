@@ -1,53 +1,89 @@
-# Gestionale Inventario
+# Inventory Management System
 
-Applicazione per la gestione di prodotti, utenti e autorizzazioni, composta da un backend REST Node.js/Express con database MySQL e da un frontend React in fase di sviluppo.
+Applicazione full-stack per la gestione di prodotti, utenti e autorizzazioni con autenticazione JWT, API REST Node.js/Express, database MySQL e frontend React.
 
-## Stato del progetto
+## Live Demo
 
-### ✅ Backend completato
+Frontend:
+https://inventory-management-app-seven-peach.vercel.app
 
-- registrazione e login utenti
-- autenticazione JWT
-- controllo token e sessione utente
-- autorizzazione admin
+Backend API:
+https://inventory-management-api-xxxx.onrender.com
+
+## Screenshots
+
+## Login
+
+![Login](docs/screenshots/login.png)
+
+## Dashboard
+
+![Dashboard](docs/screenshots/dashboardAdmin.png)
+
+## Products
+
+![Products](docs/screenshots/dashboardProdottiDemo.png)
+
+## Features
+
+- Autenticazione JWT
+- Gestione utenti con ruoli Admin/User
+- Registrazione e login utenti
 - CRUD prodotti
+- Ricerca prodotti
+- Filtro per categoria
+- Paginazione lato backend
 - CRUD utenti riservato agli admin
-- ricerca e filtro prodotti
-- paginazione dei prodotti
-- validazione input con Zod
+- autorizzazione admin
+- validazione dati con Zod
+- controllo token e sessione utente
 - script SQL per schema e dati demo
-- verifica connessione database all'avvio
+- Verifica connessione database all'avvio
+- Database MySQL relazionale
+- API REST Documentate e testate con Postman
+- Deploy frontend su Vercel
+- Deploy backen su Render
+- Database cloud Aiven
 
-### 🚧 Frontend in sviluppo
+## Architecture
 
-- progetto React configurato con Vite
-- form di login e registrazione con React Hook Form e Zod 4
-- pagina di login collegata al form
-- componenti UI di base configurati con shadcn/ui e Radix UI
-- client HTTP Axios predisposto per comunicare con il backend
-- routing e pagine protette in fase di completamento
+- Frontend: React + Vite
+- API: Node.js + Express
+- Database: MySQL
+- Authentication: JWT
+- State Management: Zustand
+- Frontend Hosting: Vercel
+- Backend Hosting: Render
+- Database Hosting: Aiven
 
-### ✅ Verifiche eseguite
+## Deploy
 
-- avvio del server sulla porta `5000`
-- connessione al database MySQL
-- autenticazione e recupero dati utente loggato
-- registrazione e login con password hashata
-- accesso ai prodotti e categorie
-- CRUD prodotti
-- CRUD utenti con ruoli admin/user
-- protezione di rotte admin
-- completamento test delle API principali
+L'applicazione è distribuita su infrastruttura cloud:
 
-### 🔜 Prossimo step
+- Frontend deployato su Vercel
+- Backend deployato su Render
+- Database MySQL ospitato su Aiven
 
-- completamento del routing e della pagina di registrazione
-- completamento della dashboard e delle pagine admin
-- verifica dei flussi frontend-backend
-- gestione UI per login, prodotti e utenti
-- eventuale dashboard amministrativa
+Le variabili d'ambiente sono gestite tramite i pannelli di configurazione delle rispettive piattaforme e non sono presenti nella repository.
 
----
+### 🚧 Frontend in sviluppo attivo
+
+Completato:
+
+- Login utente
+- Registrazione utente
+- Gestione stato autenticazione con Zustand
+- Form validation con React Hook Form e Zod
+- Client Axios configurato
+- Componenti UI con shadcn/ui
+- React Router configurato
+
+In sviluppo:
+
+- Dashboard
+- Gestione prodotti
+- Gestione utenti
+- Integrazione React Query
 
 ## Tecnologie utilizzate
 
@@ -74,60 +110,49 @@ Applicazione per la gestione di prodotti, utenti e autorizzazioni, composta da u
 - Zustand
 
 ---
-
 ## Struttura del progetto
 
 ```text
-gestionale-inventario/
+inventory-management-app/
 ├── backend/
 │   ├── db/
-│   │   ├── schema.sql
-│   │   └── seed.sql
-│   │── postman/
-│   │   └── progetto-gestionale-inventario.postman_collection.json
+│   ├── postman/
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── db.js
 │   │   ├── controllers/
-│   │   │   ├── authController.js
-│   │   │   ├── productController.js
-│   │   │   └── userController.js
 │   │   ├── middlewares/
-│   │   │   ├── adminMiddleware.js
-│   │   │   ├── authMiddleware.js
-│   │   │   └── validate.js
 │   │   ├── routes/
-│   │   │   ├── authRoutes.js
-│   │   │   ├── productRoutes.js
-│   │   │   └── userAuthRoutes.js
 │   │   ├── services/
-│   │   │   └── authService.js
 │   │   └── index.js
-│   ├── .env
 │   └── package.json
+│
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── layout/
-│   │   │   ├── ui/
-│   │   │   ├── LoginForm.jsx
-│   │   │   └── RegisterForm.jsx
-│   │   ├── lib/
-│   │   │   └── httpClient.js
 │   │   ├── pages/
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── Login.jsx
 │   │   ├── routes/
 │   │   ├── store/
-│   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   └── lib/
 │   └── package.json
+│
 └── README.md
 ```
 
 > Il file `.env` non va committato nella repository.
 
 ---
+
+### ✅ Verifiche eseguite
+
+- avvio del server sulla porta `5000`
+- connessione al database MySQL
+- autenticazione e recupero dati utente loggato
+- registrazione e login con password hashata
+- accesso ai prodotti e categorie
+- CRUD prodotti
+- CRUD utenti con ruoli admin/user
+- protezione di rotte admin
+- completamento test delle API principali
 
 ## Setup ambiente
 
@@ -225,55 +250,27 @@ Nella repository è inclusa una collection Postman pronta all'uso per testare tu
 
 ---
 
-## API REST
+```md 
+## API Features
 
-Base URL: http://localhost:5000
+### Authentication
+- User registration
+- User login
+- JWT authentication
+- Current user session
 
-### Header autenticazione
+### Products
+- Create product
+- Read product
+- Update product
+- Delete product
+- Search
+- Category filtering
+- Pagination
 
-Tutte le route protette richiedono:
-
-```http
-Authorization: Bearer <token>
-```
-
-### Autenticazione
-
-| Metodo | Endpoint | Accesso | Descrizione |
-| --- | --- | --- | --- |
-| `POST` | `/api/auth/registerUser` | Pubblico | Registra un nuovo utente |
-| `POST` | `/api/auth/login` | Pubblico | Effettua il login e restituisce il JWT |
-| `GET` | `/api/auth/me` | JWT | Verifica il token e restituisce i dati utente |
-
-### Prodotti
-
-Le rotte di prodotto richiedono un token valido; la scrittura e la modifica sono riservate agli admin.
-
-| Metodo | Endpoint | Accesso | Descrizione |
-| --- | --- | --- | --- |
-| `GET` | `/api/products` | JWT | Elenca tutti i prodotti |
-| `GET` | `/api/products?search=monitor` | JWT | Cerca prodotti per titolo |
-| `GET` | `/api/products?category=Elettronica` | JWT | Filtra prodotti per categoria |
-| `GET` | `/api/products/categories` | JWT | Elenca le categorie disponibili |
-| `GET` | `/api/products/paginated?page=1&limit=10` | JWT | Lista paginata dei prodotti |
-| `GET` | `/api/products/:id` | JWT | Recupera un prodotto per ID |
-| `POST` | `/api/products` | Admin | Crea un nuovo prodotto |
-| `PATCH` | `/api/products/:id` | Admin | Aggiorna un prodotto |
-| `DELETE` | `/api/products/:id` | Admin | Elimina un prodotto |
-
-### Utenti
-
-Le rotte utente richiedono autorizzazione admin.
-
-| Metodo | Endpoint | Accesso | Descrizione |
-| --- | --- | --- | --- |
-| `GET` | `/api/users` | Admin | Elenca tutti gli utenti |
-| `GET` | `/api/users/:id` | Admin | Recupera un utente per ID |
-| `POST` | `/api/users` | Admin | Crea un utente |
-| `PATCH` | `/api/users/:id` | Admin | Aggiorna un utente |
-| `DELETE` | `/api/users/:id` | Admin | Elimina un utente |
-
----
+ ### Users
+- User management (Admin only)
+- Role-based authorization Per i dettagli delle richieste e delle risposte API è disponibile la collection Postman nella cartella `backend/postman/`.
 
 ## Esempi di payload
 
@@ -326,8 +323,6 @@ Le rotte utente richiedono autorizzazione admin.
 }
 ```
 
----
-
 ## Validazione e sicurezza
 
 - le password vengono salvate in modo sicuro con `bcryptjs`
@@ -337,9 +332,17 @@ Le rotte utente richiedono autorizzazione admin.
 - i dati in input vengono validati con `zod`
 - gli endpoint prendono parametri SQL in modo sicuro tramite prepared statements
 
----
-
 ## Note finali
 
-Il backend e le API principali sono completati. Il frontend React è stato avviato e include i form di autenticazione e una prima pagina di login; routing, registrazione e viste per la gestione di prodotti e utenti sono ancora in sviluppo.
+Questo progetto mi ha permesso di approfondire:
+
+- Sviluppo API REST con Express
+- Autenticazione JWT
+- Autorizzazione basata sui ruoli
+- Modellazione database MySQL
+- Query SQL parametrizzate
+- Deploy cloud di applicazioni full-stack
+- Gestione variabili d'ambiente
+- Architettura frontend React moderna
+- Gestione dello stato globale con Zustand
 
