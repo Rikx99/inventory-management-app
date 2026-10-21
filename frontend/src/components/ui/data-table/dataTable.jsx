@@ -32,13 +32,17 @@ export function DataTable({columns, data}) {
   })
   return(
     <div className="w-full">
-        <div className="overflow-hidden rounded-md border">
+        <div className="w-full overflow-x-auto rounded-md border">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id}>
+                        <TableHead 
+                            key={header.id}
+                            className=
+                            {header.column.columnDef.meta?.className}
+                            >
                             {header.isPlaceholder ? null : (
                             <table.FlexRender header={header} />
                             )}
@@ -53,7 +57,11 @@ export function DataTable({columns, data}) {
                         table.getRowModel().rows.map((row) => (
                             <TableRow key={row.id}>
                             {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
+                                <TableCell 
+                                  key={cell.id}
+                                  className=
+                                  {cell.column.columnDef.meta?.className}
+                                >
                                 <table.FlexRender cell={cell} />
                                 </TableCell>
                             ))}

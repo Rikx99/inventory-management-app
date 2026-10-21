@@ -7,15 +7,24 @@ const baseColumns = [
     header: "Nome prodotto",
     enableSorting: true,
     enableFiltering: true,
+
   },
   {
     accessorKey: "description",
     header: "Descrizione",
     enableSorting: false,
     enableFiltering: true,
+    meta: {
+      className:"hidden xl:table-cell",
+    },
     cell: ({ row }) => {
-      const text = row.getValue("description") ?? ""
-      return text.length > 80 ? text.slice(0, 80) + "..." : text
+      const text = row.getValue("description") ?? "";
+      return (
+        <div className="max-w-sm whitespace-normal breake-words">
+          {text.length > 80 ? 
+          `${text.slice(0, 80)}...` : text}
+        </div>
+      ) 
     },
   },
   {
@@ -23,7 +32,10 @@ const baseColumns = [
     header: "Prezzo",
     enableSorting: true,
     enableFiltering: true,
-    cell: ({ row }) => `${row.getValue("price")} €`,
+    cell: ({ row }) =>{ 
+      const price = Number(row.getValue("price"));
+      return `${price.toFixed(2)} €`;
+    }
   },
   {
     accessorKey: "stock_quantity",
@@ -45,12 +57,18 @@ const adminColumns = [
     header: "Creato da",
     enableSorting: true,
     enableFiltering: true,
+    meta: {
+      className:"hidden lg:table-cell",
+    }
   },
   {
     accessorKey: "created_at",
     header: "Creato il",
     enableSorting: true,
     enableFiltering: false,
+    meta: {
+        className:"hidden lg:table-cell",
+      },
     cell: ({ row }) => {
       const date = row.getValue("created_at")
       return new Date(date).toLocaleDateString("it-IT")
@@ -61,6 +79,9 @@ const adminColumns = [
     header: "Aggiornato il",
     enableSorting: true,
     enableFiltering: false,
+    meta:{
+      className:"hidden lg:table-cell"
+    },
     cell: ({ row }) => {
       const date = row.getValue("updated_at")
       return new Date(date).toLocaleDateString("it-IT")
