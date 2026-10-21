@@ -24,7 +24,7 @@ https://inventory-management-api-xxxx.onrender.com
 
 ## Products
 
-![Products](docs/screenshots/dashboardProdottiDemo.png)
+![Products](docs/screenshots/tabellaProdotti.png)
 
 ## Features
 
