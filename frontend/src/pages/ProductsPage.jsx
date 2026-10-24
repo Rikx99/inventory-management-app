@@ -30,18 +30,20 @@ export default function ProductsPage() {
 
   console.log(data);
   return (
-    <section>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+    <section className="flex h-full min-h-0 flex-col">
+      <h1 className="shrink-0 text-3xl font-bold text-gray-900 dark:text-white">
         Prodotti
       </h1>
-
-      <DataTable columns={productColumns} data={products} />
-
-      <DataTablePagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
+      <div className="container mx-auto flex min-h-0 flex-1 flex-col py-5">
+        <DataTable columns={productColumns} data={products} />
+      </div>
+      <div className="flex shrink-0 items-center justify-end space-x-2">
+        <DataTablePagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      </div>
     </section>
   )
   

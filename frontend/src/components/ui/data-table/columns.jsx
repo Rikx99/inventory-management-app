@@ -14,13 +14,10 @@ const baseColumns = [
     header: "Descrizione",
     enableSorting: false,
     enableFiltering: true,
-    meta: {
-      className:"hidden xl:table-cell",
-    },
     cell: ({ row }) => {
       const text = row.getValue("description") ?? "";
       return (
-        <div className="max-w-sm whitespace-normal breake-words">
+        <div className="max-w-sm whitespace-normal wrap-break-word">
           {text.length > 80 ? 
           `${text.slice(0, 80)}...` : text}
         </div>
@@ -57,18 +54,12 @@ const adminColumns = [
     header: "Creato da",
     enableSorting: true,
     enableFiltering: true,
-    meta: {
-      className:"hidden lg:table-cell",
-    }
   },
   {
     accessorKey: "created_at",
     header: "Creato il",
     enableSorting: true,
     enableFiltering: false,
-    meta: {
-        className:"hidden lg:table-cell",
-      },
     cell: ({ row }) => {
       const date = row.getValue("created_at")
       return new Date(date).toLocaleDateString("it-IT")
@@ -79,9 +70,6 @@ const adminColumns = [
     header: "Aggiornato il",
     enableSorting: true,
     enableFiltering: false,
-    meta:{
-      className:"hidden lg:table-cell"
-    },
     cell: ({ row }) => {
       const date = row.getValue("updated_at")
       return new Date(date).toLocaleDateString("it-IT")

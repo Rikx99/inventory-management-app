@@ -9,6 +9,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { dataTableFeatures } from '@/components/ui/data-table/dataTableFeatures';
+import { cn } from "cn";
 
 export function DataTable({columns, data}) {
     const [sorting, setSorting] = React.useState([])
@@ -31,17 +32,19 @@ export function DataTable({columns, data}) {
     onRowSelectionChange: setRowSelection,
   })
   return(
-    <div className="w-full">
-        <div className="w-full overflow-x-auto rounded-md border">
-            <Table>
+    <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col rounded-md border">
+            <Table containerClassName="min-h-0 flex-1 overflow-auto">
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
                         <TableHead 
                             key={header.id}
-                            className=
-                            {header.column.columnDef.meta?.className}
+                            className={cn(
+                              "sticky top-0 z-10 bg-background",
+                              header.column.columnDef.meta?.className,
+                            )}
                             >
                             {header.isPlaceholder ? null : (
                             <table.FlexRender header={header} />
@@ -80,4 +83,3 @@ export function DataTable({columns, data}) {
     </div>
   )
 }
-
