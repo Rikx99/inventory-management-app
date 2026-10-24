@@ -9,9 +9,6 @@ https://inventory-management-app-seven-peach.vercel.app
 
 > Nota: la demo utilizza servizi cloud gratuiti e potrebbe non essere sempre disponibile.
 
-Backend API:
-https://inventory-management-api-xxxx.onrender.com
-
 ## Screenshots
 
 ## Login
