@@ -5,7 +5,7 @@ import { validate, registerSchema, loginSchema } from '../middlewares/validate.j
 
 const router = express.Router();
 
-router.post('/registerUser', validate(registerSchema), registerUser);
+router.post('/register', validate(registerSchema), registerUser);
 router.post('/login', validate(loginSchema), login);
 // Rotta per verificare la validità del token e recuperare l'utente connesso
 router.get('/me', verifyToken, (req, res) => {

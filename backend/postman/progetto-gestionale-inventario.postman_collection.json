@@ -23,14 +23,14 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/registerUser",
+              "raw": "{{baseUrl}}/api/auth/register",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "auth",
-                "registerUser"
+                "register"
               ]
             }
           },
