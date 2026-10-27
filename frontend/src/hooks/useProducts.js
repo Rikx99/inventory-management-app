@@ -1,16 +1,16 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import apiClient from "@/lib/httpClient";
+import {
+  keepPreviousData,
+  useQuery,
+} from "@tanstack/react-query";
 
-export function useProducts(page) {
+import { getProducts } from "@/api/productsApi";
+
+export function useProducts(params) {
   return useQuery({
-    queryKey: ["products", page],
-    queryFn: async () => {
-      const { data } = await apiClient.get(
-        `/products/paginated?page=${page}&limit=10`
-      );
+    queryKey: ["products", params],
 
-      return data;
-    },
+    queryFn: () => getProducts(params),
+
     placeholderData: keepPreviousData,
   });
 }
