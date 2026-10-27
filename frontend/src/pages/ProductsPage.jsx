@@ -15,7 +15,10 @@ export default function ProductsPage() {
     isPending,
     isError,
     error,
-  } = useProducts(page);
+  } = useProducts({
+    page,
+    limit: 10,
+  });
   
   console.log("CURRENT PAGE:", page);
 
