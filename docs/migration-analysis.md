@@ -313,8 +313,30 @@ Capire esattamente quali file e query dipendono da MySQL prima di iniziare quals
 ## FASE 1
 Status: ✅ COMPLETATA
 
+Data : 07/11/2026
+
 Output:
 - Mappa file dipendenti da MySQL
 - Mappa query SQL
 - Identificazione file coinvolti nella migrazione
 - Documento migration-analysis.md creato
+
+# FASE 2 - Backup Database
+
+Status: ✅ COMPLETATA
+
+Data : 07/11/2026
+
+Motivazione:
+## Backup Aiven
+- Backup automatici attivi
+- Full backup giornalieri disponibili
+- Ultimo backup verificato: 6 Nov 2026
+- schema.sql presente in repository.
+- seed.sql presente in repository.
+- Database utilizzato esclusivamente per sviluppo e portfolio.
+- Non sono presenti dati critici da preservare.
+
+Decisione:
+
+Per la migrazione verranno utilizzati schema.sql e seed.sql come fonte principale per la ricostruzione del database PostgreSQL.
