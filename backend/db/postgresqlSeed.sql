@@ -2,6 +2,10 @@
 -- SCRIPT DI POPOLAMENTO DATI FITTIZI (postgresqlSeed.sql)
 -- ========================================================
 
+-- Pulisce i dati esistenti prima del popolamento (opzionale)
+TRUNCATE TABLE products, categories, users
+RESTART IDENTITY;
+
 -- --------------------------------------------------------
 -- 1. POPOLAMENTO TABELLA USERS
 -- Nota: L'hash corrisponde alla password 'password123'
