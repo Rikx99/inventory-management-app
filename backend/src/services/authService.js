@@ -4,11 +4,11 @@ import jwt from 'jsonwebtoken';
 // Registrazione utente
 export const createUser = async ({username, email, password}) => {
     // controllo dublicati
-    const [existingUser] = await db.execute(
-        'SELECT id FROM users WHERE email = ? or username = ?',
+    const existingUser = await db.query(
+        'SELECT id FROM users WHERE email = $1 or username = $2',
         [email, username]
     );
-    if(existingUser.length > 0){
+    if(existingUser.rowCount > 0){
         const error = new Error('Email or Username already in use');
         error.statusCode = 400;
         throw error;
@@ -17,8 +17,8 @@ export const createUser = async ({username, email, password}) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
     // Inserimento nel db
-    await db.execute(
-    'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
+    await db.query(
+    'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)',
     [username, email, passwordHash]
   );
 };
@@ -30,14 +30,14 @@ export const loginUser = async ({ email, password }) => {
   }
 
   // 2. Cerca l'utente per email
-  const [users] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-  if (users.length === 0) {
+  const users = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+  if (users.rowCount === 0) {
     const error = new Error('Invalid credentials.');
     error.statusCode = 401;
     throw error;
   }
 
-  const user = users[0];
+  const user = users.rows[0];
 
   // 3. Verifica password
   const isPasswordValid = await bcrypt.compare(password, user.password_hash);
