@@ -65,19 +65,19 @@ export const getProducts = async (req, res) => {
     const queryParams = [];
 
     if (search) {
-      query += ' AND p.title LIKE ?';
+      query += ` AND p.title LIKE $${queryParams.length + 1}`;
       queryParams.push(`%${search}%`);
     }
 
     if (category) {
-      query += ' AND c.name = ?';
+      query += ` AND c.name = $${queryParams.length + 1}`;
       queryParams.push(category);
     }
 
     query += ' ORDER BY p.created_at DESC';
 
-    const [products] = await db.execute(query, queryParams);
-    return res.json(products);
+    const products = await db.query(query, queryParams);
+    return res.json(products.rows);
   } catch (error) {
     console.error('Error retrieving products:', error);
     return res.status(500).json({ message: 'Internal server error.' });
@@ -88,16 +88,16 @@ export const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [product] = await db.execute(
-      `${getProductSelect(req.user?.role === 'admin')} WHERE p.id = ?`,
+    const product = await db.query(
+      `${getProductSelect(req.user?.role === 'admin')} WHERE p.id = $1`,
       [id],
     );
 
-    if (product.length === 0) {
+    if (product.rowCount === 0) {
       return res.status(404).json({ message: 'Product not found.' });
     }
 
-    return res.json(product[0]);
+    return res.json(product.rows[0]);
   } catch (error) {
     console.error('Error retrieving product by id:', error);
     return res.status(500).json({ message: 'Internal server error.' });
@@ -129,9 +129,10 @@ export const insertProduct = async (req, res) => {
   }
 
   try {
-    const [result] = await db.execute(
+    const result = await db.query(
       `INSERT INTO products (title, description, price, stock_quantity, category_id, created_by)
-      VALUES (?, ?, ?, ?, ?, ?)`,
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id`,
       [
         title.trim(),
         description || '',
@@ -144,7 +145,7 @@ export const insertProduct = async (req, res) => {
 
     return res.status(201).json({
       message: 'Product created successfully!',
-      productId: result.insertId,
+      productId: result.rows[0].id,
     });
   } catch (error) {
     console.error('Error creating the product:', error);
@@ -162,15 +163,17 @@ export const updateProductById = async (req, res) => {
       return res.status(400).json({ message: 'No valid fields were provided for the update.' });
     }
 
-    const setClause = Object.keys(fields).map((key) => `${key} = ?`).join(', ');
     const values = Object.values(fields);
+    const setClause = Object.keys(fields)
+      .map((key, index) => `${key} = $${index + 1}`)
+      .join(', ');
 
-    const [result] = await db.execute(
-      `UPDATE products SET ${setClause} WHERE id = ?`,
+    const result = await db.query(
+      `UPDATE products SET ${setClause} WHERE id = $${values.length + 1}`,
       [...values, id],
     );
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Product not found.' });
     }
 
@@ -185,9 +188,9 @@ export const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [result] = await db.execute('DELETE FROM products WHERE id = ?', [id]);
+    const result = await db.query('DELETE FROM products WHERE id = $1', [id]);
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Product not found.' });
     }
 
@@ -200,8 +203,8 @@ export const deleteProduct = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   try {
-    const [categories] = await db.execute('SELECT * FROM categories ORDER BY name ASC');
-    return res.json(categories);
+    const categories = await db.query('SELECT * FROM categories ORDER BY name ASC');
+    return res.json(categories.rows);
   } catch (error) {
     console.error('Error retrieving categories:', error);
     return res.status(500).json({ message: 'Error retrieving categories.' });
@@ -214,22 +217,22 @@ export const getProductsPaginated = async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
-    // Iniettare limit e offset direttamente come numeri sicuri evita l'errore dei prepared statement di MySQL
-    const [products] = await db.execute(
+    const products = await db.query(
       `${getProductSelect(req.user?.role === 'admin')}
        ORDER BY p.created_at DESC
-       LIMIT ${limit} OFFSET ${offset}`
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
     );
 
-    const [countResult] = await db.execute('SELECT COUNT(*) AS total FROM products');
-    const total = countResult[0].total;
+    const countResult = await db.query('SELECT COUNT(*) AS total FROM products');
+    const total = Number(countResult.rows[0].total);
 
     return res.json({
       page,
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      products,
+      products: products.rows,
     });
   } catch (error) {
     console.error('Error retrieving paginated products:', error);
