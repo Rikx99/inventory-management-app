@@ -9,19 +9,21 @@ export const getUsers = async (req, res) => {
     const queryParams = [];
 
     if (search) {
-      query += ' AND (username LIKE ? OR email LIKE ?)';
+      const usernameParam = queryParams.length + 1;
+      const emailParam = usernameParam + 1;
+      query += ` AND (username LIKE $${usernameParam} OR email LIKE $${emailParam})`;
       queryParams.push(`%${search}%`, `%${search}%`);
     }
 
     if (role) {
-      query += ' AND role = ?';
+      query += ` AND role = $${queryParams.length + 1}`;
       queryParams.push(role);
     }
 
     query += ' ORDER BY created_at DESC';
 
-    const [users] = await db.execute(query, queryParams);
-    return res.json(users);
+    const users = await db.query(query, queryParams);
+    return res.json(users.rows);
   } catch (error) {
     console.error('Error reading users:', error);
     return res.status(500).json({ message: 'Internal server error.' });
@@ -32,16 +34,16 @@ export const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [users] = await db.execute(
-      'SELECT id, username, email, role, created_at FROM users WHERE id = ?',
+    const users = await db.query(
+      'SELECT id, username, email, role, created_at FROM users WHERE id = $1',
       [id],
     );
 
-    if (users.length === 0) {
+    if (users.rowCount === 0) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    return res.json(users[0]);
+    return res.json(users.rows[0]);
   } catch (error) {
     console.error('Error retrieving user:', error);
     return res.status(500).json({ message: 'Internal server error.' });
@@ -63,12 +65,12 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ message: 'Username must be at least 3 characters long.' });
     }
 
-    const [existing] = await db.execute(
-      'SELECT id FROM users WHERE email = ? OR username = ?',
+    const existing = await db.query(
+      'SELECT id FROM users WHERE email = $1 OR username = $2',
       [normalizedEmail, normalizedUsername],
     );
 
-    if (existing.length > 0) {
+    if (existing.rowCount > 0) {
       return res.status(400).json({ message: 'Email or username already in use.' });
     }
 
@@ -76,14 +78,14 @@ export const createUser = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
     const userRole = role === 'admin' ? 'admin' : 'user';
 
-    const [result] = await db.execute(
-      'INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)',
+    const result = await db.query(
+      'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id',
       [normalizedUsername, normalizedEmail, passwordHash, userRole],
     );
 
     return res.status(201).json({
       message: 'User created successfully!',
-      userId: result.insertId,
+      userId: result.rows[0].id,
     });
   } catch (error) {
     console.error('Error creating user:', error);
@@ -96,8 +98,8 @@ export const updateUser = async (req, res) => {
   const { username, email, role } = req.body;
 
   try {
-    const [users] = await db.execute('SELECT id FROM users WHERE id = ?', [id]);
-    if (users.length === 0) {
+    const users = await db.query('SELECT id FROM users WHERE id = $1', [id]);
+    if (users.rowCount === 0) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
@@ -109,8 +111,8 @@ export const updateUser = async (req, res) => {
       if (trimmedUsername.length < 3) {
         return res.status(400).json({ message: 'Username must be at least 3 characters long.' });
       }
-      updates.push('username = ?');
       values.push(trimmedUsername);
+      updates.push(`username = $${values.length}`);
     }
 
     if (email !== undefined) {
@@ -118,24 +120,24 @@ export const updateUser = async (req, res) => {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
         return res.status(400).json({ message: 'Invalid email format.' });
       }
-      updates.push('email = ?');
       values.push(trimmedEmail);
+      updates.push(`email = $${values.length}`);
     }
 
     if (role !== undefined) {
       if (!['admin', 'user'].includes(role)) {
         return res.status(400).json({ message: 'Role must be either admin or user.' });
       }
-      updates.push('role = ?');
       values.push(role);
+      updates.push(`role = $${values.length}`);
     }
 
     if (updates.length === 0) {
       return res.status(400).json({ message: 'No valid fields were provided for the update.' });
     }
 
-    const [duplicateCheck] = await db.execute(
-      'SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?',
+    const duplicateCheck = await db.query(
+      'SELECT id FROM users WHERE (username = $1 OR email = $2) AND id != $3',
       [
         username !== undefined ? String(username).trim() : null,
         email !== undefined ? String(email).trim().toLowerCase() : null,
@@ -143,12 +145,12 @@ export const updateUser = async (req, res) => {
       ],
     );
 
-    if (duplicateCheck.length > 0) {
+    if (duplicateCheck.rowCount > 0) {
       return res.status(400).json({ message: 'Email or username already in use.' });
     }
 
-    await db.execute(
-      `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
+    await db.query(
+      `UPDATE users SET ${updates.join(', ')} WHERE id = $${values.length + 1}`,
       [...values, id],
     );
 
@@ -168,9 +170,9 @@ export const deleteUser = async (req, res) => {
   }
 
   try {
-    const [result] = await db.execute('DELETE FROM users WHERE id = ?', [id]);
+    const result = await db.query('DELETE FROM users WHERE id = $1', [id]);
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
