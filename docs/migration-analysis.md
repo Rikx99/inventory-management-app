@@ -340,3 +340,285 @@ Motivazione:
 Decisione:
 
 Per la migrazione verranno utilizzati schema.sql e seed.sql come fonte principale per la ricostruzione del database PostgreSQL.
+
+# FASE 3 - Analisi schema.sql
+
+Status: ✅ COMPLETATA
+
+Data: xx/xx/xxxx
+
+Risultati:
+
+- Tabelle individuate: 3
+- Foreign Keys: 2
+- Complessità stimata: Semplice
+- Relazioni:
+  - Categories (1:N) Products
+  - Users (1:N) Products
+
+Elementi MySQL-specifici individuati:
+
+- AUTO_INCREMENT (3)
+- ENUM role
+- ON UPDATE CURRENT_TIMESTAMP
+
+Elementi NON presenti:
+
+- ENGINE
+- CHARSET
+- COLLATE
+- UNSIGNED
+- Stored Procedures
+- Trigger
+
+Decisioni future:
+
+- AUTO_INCREMENT → SERIAL
+- ENUM role → valutare VARCHAR + CHECK
+- updated_at → gestione applicativa oppure trigger PostgreSQL
+
+Conclusione:
+
+Lo schema del database non rappresenta un ostacolo significativo alla migrazione verso PostgreSQL.
+La complessità principale sarà l'aggiornamento del backend Node.js e delle query SQL.
+
+# FASE 4 - Analisi seed.sql
+
+Status: ✅ COMPLETATA
+
+Data: xx/xx/xxxx
+
+Risultati:
+
+- Tabelle popolate: 3
+- Record totali: 13
+- Complessità: Semplice
+
+Tabelle:
+
+- users (2 record)
+- categories (3 record)
+- products (8 record)
+
+Compatibilità PostgreSQL:
+
+✅ INSERT compatibili
+
+✅ Nessuna funzione MySQL negli INSERT
+
+✅ Ordine popolamento corretto
+
+Punti da verificare:
+
+- SET FOREIGN_KEY_CHECKS
+- Gestione ID automatici
+- Allineamento foreign key durante la migrazione
+
+Conclusione:
+
+Il file seed.sql non rappresenta un ostacolo significativo alla migrazione PostgreSQL.
+
+# FASE 5 - Preparazione Ambiente PostgreSQL
+
+Status: ✅ COMPLETATA
+
+Service Name:
+rikx-inventory-postgres-rbarchi09-ab2d
+
+Version:
+PostgreSQL 18
+
+Hosting:
+Aiven
+
+Cloud Provider:
+DigitalOcean
+
+Region:
+AMS (Amsterdam)
+
+Connection Data:
+
+Database:
+defaultdb
+
+Host:
+rikx-inventory-postgres-rbarchi09-ab2d.c.aivencloud.com
+
+Port:
+15384
+
+User:
+avnadmin
+
+SSL:
+require
+
+Notes:
+Password conservata in Aiven e non salvata nel repository.
+# FASE 6 - Verifica connessione PostgreSQL
+
+## Obiettivo
+
+Verificare che il nuovo database PostgreSQL creato su Aiven sia raggiungibile e pronto per la migrazione.
+
+## Attività eseguite
+
+- [x] Creato servizio PostgreSQL su Aiven
+- [x] Recuperate credenziali di connessione
+- [x] Installato/configurato driver PostgreSQL in DBeaver
+- [x] Configurata connessione al database
+- [x] Verificata connessione tramite DBeaver
+- [x] Verificato accesso al database `defaultdb`
+- [x] Verificata presenza dello schema `public`
+
+## Ambiente
+
+Provider: Aiven
+
+Database Engine: PostgreSQL 18
+
+Client utilizzato: DBeaver Community
+
+SSL: require
+
+## Risultato
+
+Connessione stabilita con successo.
+
+Database PostgreSQL raggiungibile e operativo.
+
+Lo schema predefinito `public` è disponibile e pronto per la creazione delle tabelle applicative.
+
+## Note
+
+Nessuna modifica effettuata al backend Node.js.
+
+Nessuna modifica effettuata alle variabili ambiente esistenti.
+
+La connessione MySQL attuale rimane attiva e funzionante.
+
+## Stato
+
+✅ COMPLETATA
+
+FASE 7.1 - Revisione modello dati
+## Decisioni progettuali emerse durante la migrazione
+
+### products.created_by
+
+Situazione originale:
+ON DELETE CASCADE
+
+Problema:
+L'eliminazione di un utente comporta l'eliminazione di tutti i prodotti creati.
+
+Valutazione:
+Comportamento non desiderato.
+
+Esempio di scenario reale:
+L'uscita di un dipendente dall'azienda non deve causare la perdita dei dati aziendali.
+
+Decisione:
+Da modificare durante la migrazione PostgreSQL.
+
+### Revisione products.created_by
+
+Situazione MySQL:
+ON DELETE CASCADE
+
+Problema:
+L'eliminazione di un utente comporta l'eliminazione di tutti i prodotti creati dall'utente.
+
+Valutazione:
+Comportamento non coerente con il contesto di un gestionale aziendale.
+
+Scenario reale:
+Un dipendente può lasciare l'azienda, ma i dati creati durante il suo periodo lavorativo devono rimanere disponibili.
+
+Decisione:
+
+- Gli utenti non verranno eliminati fisicamente.
+- Gli utenti verranno disattivati.
+- I prodotti manterranno il riferimento all'utente creatore.
+- La tracciabilità storica verrà preservata.
+
+Impatto:
+
+- Rivalutare ON DELETE CASCADE sulla foreign key created_by.
+- Introdurre in futuro una gestione di account attivi/disattivati.
+
+### Gestione updated_at
+
+MySQL:
+ON UPDATE CURRENT_TIMESTAMP
+
+PostgreSQL:
+Trigger + Trigger Function
+
+Motivazione:
+PostgreSQL non supporta ON UPDATE CURRENT_TIMESTAMP
+direttamente nella definizione della colonna.
+
+Risultato:
+Il campo updated_at viene aggiornato automaticamente
+prima di ogni UPDATE sulla tabella products.
+# FASE 7 - Conversione Schema PostgreSQL
+
+Status: ✅ COMPLETATA
+
+Risultati:
+- Conversione AUTO_INCREMENT → SERIAL
+- Conversione ENUM → CHECK constraint
+- Revisione foreign key
+- Revisione regole di cancellazione
+- Implementazione trigger per updated_at
+- Preservazione della tracciabilità utenti
+- Preservazione dei prodotti in caso di eliminazione categoria
+
+Decisioni progettuali:
+
+products.created_by
+- ON DELETE RESTRICT
+
+products.category_id
+- ON DELETE SET NULL
+
+products.updated_at
+- Gestione automatica tramite trigger PostgreSQL
+FOREIGN_KEY_CHECKS rimosso.
+
+Motivazione:
+costrutto MySQL-specifico.
+
+Le DELETE vengono già eseguite
+nell'ordine corretto:
+
+products
+↓
+categories
+↓
+users
+
+Quindi non è necessario disabilitare i controlli referenziali.
+
+# FASE 9 - Validazione Database PostgreSQL
+
+Status: ✅ COMPLETATA
+
+Test eseguiti:
+
+✅ Creazione tabelle
+✅ Caricamento seed
+✅ Verifica foreign keys
+✅ Verifica trigger updated_at
+✅ Verifica ON DELETE SET NULL
+✅ Verifica ON DELETE RESTRICT
+
+Risultati:
+
+- I prodotti sopravvivono alla cancellazione di una categoria.
+- category_id viene impostato a NULL.
+- Gli utenti referenziati dai prodotti non possono essere eliminati.
+- updated_at viene aggiornato automaticamente ad ogni UPDATE.
+- Il database PostgreSQL replica correttamente le regole di business desiderate.
